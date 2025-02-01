@@ -89,15 +89,36 @@ let quotes = JSON.parse(localStorage.getItem('quotes')) || [
   }
   
   // Function to add a new quote
-  function addQuote() {
+  async function addQuote() {
     const newQuoteText = document.getElementById('newQuoteText').value;
     const newQuoteCategory = document.getElementById('newQuoteCategory').value;
   
     // Ensure both fields are filled before adding the quote
     if (newQuoteText && newQuoteCategory) {
-      quotes.push({ text: newQuoteText, category: newQuoteCategory });
+      const newQuote = { text: newQuoteText, category: newQuoteCategory };
+  
+      // Add the new quote locally
+      quotes.push(newQuote);
       saveQuotes();
-      alert('New quote added!');
+  
+      // Send the new quote to the server using a POST request
+      try {
+        const response = await fetch(serverUrl, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json', // Set content type to JSON
+          },
+          body: JSON.stringify(newQuote), // Convert the new quote to JSON
+        });
+  
+        if (response.ok) {
+          alert('New quote added to the server and locally!');
+        } else {
+          console.error('Error adding quote to server:', response.status);
+        }
+      } catch (error) {
+        console.error('Error connecting to the server:', error);
+      }
       
       // Clear the input fields after adding the quote
       document.getElementById('newQuoteText').value = '';
