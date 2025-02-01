@@ -35,12 +35,13 @@ let quotes = JSON.parse(localStorage.getItem('quotes')) || [
   }
   
   // Function to sync the local data with the server data
-  async function syncWithServer() {
+  async function syncQuotes() {
     const serverQuotes = await fetchQuotesFromServer();
   
     // Compare server data with local data and resolve conflicts (server data takes precedence)
     let conflictsResolved = false;
   
+    // Loop through each server quote and check if it already exists locally
     serverQuotes.forEach((serverQuote, index) => {
       const localQuote = quotes.find(quote => quote.text === serverQuote.text);
       
@@ -67,7 +68,7 @@ let quotes = JSON.parse(localStorage.getItem('quotes')) || [
   
   // Function to handle periodic syncing (every 30 seconds)
   function startAutoSync() {
-    setInterval(syncWithServer, 30000); // Sync every 30 seconds
+    setInterval(syncQuotes, 30000); // Sync every 30 seconds
   }
   
   // Function to display quotes based on category (or all quotes)
