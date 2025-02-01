@@ -6,14 +6,68 @@ let quotes = JSON.parse(localStorage.getItem('quotes')) || [
     { text: "Life is what happens when you're busy making other plans.", category: "Philosophy" }
   ];
   
+  // Simulating the server API URL (using JSONPlaceholder or similar API)
+  const serverUrl = "https://jsonplaceholder.typicode.com/posts"; // Mock URL for quotes (this will be simulated)
+  
   // Function to save quotes to localStorage
   function saveQuotes() {
     localStorage.setItem('quotes', JSON.stringify(quotes));
   }
   
-  // Function to filter quotes by category
-  function filterQuote(category = '') {
-    return quotes.filter(quote => category === '' || quote.category === category);
+  // Function to simulate fetching quotes from the server
+  async function fetchQuotesFromServer() {
+    try {
+      // Simulate a delay for fetching data from a server
+      const response = await fetch(serverUrl);
+      const data = await response.json();
+      
+      // Simulating a conflict scenario (for demo purposes, data from the server is random)
+      const serverQuotes = data.map(item => ({
+        text: item.title, // Using the title as the quote
+        category: item.body.substring(0, 5) // Random category from the body
+      }));
+  
+      return serverQuotes;
+    } catch (error) {
+      console.error("Error fetching from the server:", error);
+      return [];
+    }
+  }
+  
+  // Function to sync the local data with the server data
+  async function syncWithServer() {
+    const serverQuotes = await fetchQuotesFromServer();
+  
+    // Compare server data with local data and resolve conflicts (server data takes precedence)
+    let conflictsResolved = false;
+  
+    serverQuotes.forEach((serverQuote, index) => {
+      const localQuote = quotes.find(quote => quote.text === serverQuote.text);
+      
+      if (localQuote) {
+        // Conflict detected: resolve by preferring server data
+        Object.assign(localQuote, serverQuote);
+        conflictsResolved = true;
+      } else {
+        // No conflict: add the new quote from the server
+        quotes.push(serverQuote);
+      }
+    });
+  
+    // Save the updated quotes to localStorage
+    saveQuotes();
+  
+    // Notify the user about the sync process and any conflicts resolved
+    if (conflictsResolved) {
+      alert("Quotes have been synced with the server. Some conflicts were resolved.");
+    } else {
+      alert("Quotes have been synced with the server. No conflicts were found.");
+    }
+  }
+  
+  // Function to handle periodic syncing (every 30 seconds)
+  function startAutoSync() {
+    setInterval(syncWithServer, 30000); // Sync every 30 seconds
   }
   
   // Function to display quotes based on category (or all quotes)
@@ -167,4 +221,7 @@ let quotes = JSON.parse(localStorage.getItem('quotes')) || [
   
   // Populate category filter and update quotes display
   populateCategories();
+  
+  // Start auto sync every 30 seconds
+  startAutoSync();
   
