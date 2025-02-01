@@ -11,12 +11,15 @@ let quotes = JSON.parse(localStorage.getItem('quotes')) || [
     localStorage.setItem('quotes', JSON.stringify(quotes));
   }
   
+  // Function to filter quotes by category
+  function filterQuote(category = '') {
+    return quotes.filter(quote => category === '' || quote.category === category);
+  }
+  
   // Function to display quotes based on category (or all quotes)
-  function showQuotesByCategory(category = null) {
+  function showQuotesByCategory(category = '') {
     const quoteDisplay = document.getElementById('quoteDisplay');
-    const filteredQuotes = category
-      ? quotes.filter(quote => quote.category === category)
-      : quotes;
+    const filteredQuotes = filterQuote(category); // Use filterQuote to get filtered quotes
     quoteDisplay.innerHTML = filteredQuotes.map(quote => `<p>"${quote.text}"</p><p><strong>- ${quote.category}</strong></p>`).join('');
   }
   
@@ -131,7 +134,7 @@ let quotes = JSON.parse(localStorage.getItem('quotes')) || [
   // Function to filter quotes by selected category
   function categoryFilter(event) {
     const selectedCategory = event.target.value;
-    showQuotesByCategory(selectedCategory);
+    showQuotesByCategory(selectedCategory); // Pass selected category to filter quotes
   }
   
   // Add event listener to show a new random quote when the button is clicked
@@ -164,3 +167,4 @@ let quotes = JSON.parse(localStorage.getItem('quotes')) || [
   
   // Populate category filter and update quotes display
   populateCategories();
+  
