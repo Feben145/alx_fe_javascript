@@ -64,6 +64,9 @@ let quotes = JSON.parse(localStorage.getItem('quotes')) || [
     } else {
       alert("Quotes have been synced with the server. No conflicts were found.");
     }
+  
+    // Show a notification for successful sync
+    alert("Quotes synced with server!");
   }
   
   // Function to handle periodic syncing (every 30 seconds)
@@ -246,4 +249,5 @@ let quotes = JSON.parse(localStorage.getItem('quotes')) || [
   
   // Start auto sync every 30 seconds
   startAutoSync();
+
   
