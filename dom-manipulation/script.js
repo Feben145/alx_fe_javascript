@@ -88,7 +88,7 @@ function exportQuotesToJson() {
   const jsonUrl = URL.createObjectURL(jsonBlob);
   const a = document.createElement('a');
   a.href = jsonUrl;
-  a.download = 'quotes.json';
+  a.download = 'quotes.json'; // Name of the exported file
   a.click();
   URL.revokeObjectURL(jsonUrl);
 }
